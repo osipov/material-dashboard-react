@@ -41,10 +41,42 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+import { useSignIn } from 'react-auth-kit'
+
+
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const signIn = useSignIn()
+
+  const onClickSignIn = () => {
+    console.log('on click')
+    const kcAuthState = {
+      email: 'joeshmoe@mailismagic.com'
+    }
+    if (signIn({
+        token: 'abc',
+        expiresIn: 1,
+        tokenType: 'Bearer',
+        authState: kcAuthState
+      })) {
+
+      console.log('redirect' + window.location.search + window.location.hash)
+      
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('r')) {
+        console.log(params.get('r'))
+        window.location.href = params.get('r') + "" + window.location.hash
+      } else {
+        // window.location.href = window.location.hostname
+      }
+      
+    } else {
+      console.log('error')
+    }
+  }
 
   return (
     <BasicLayout image={bgImage}>
@@ -102,7 +134,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" fullWidth onClick={onClickSignIn}>
                 sign in
               </MDButton>
             </MDBox>

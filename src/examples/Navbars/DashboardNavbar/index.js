@@ -13,7 +13,10 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+
+/* TODO: auth_provider */
+import AuthContext from "../../../context/auth_provider";
 
 // react-router components
 import { useLocation, Link } from "react-router-dom";
@@ -27,6 +30,10 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
+
+/* TODO auth_provider */
+import DefaultNavbarLink from "examples/Navbars/DefaultNavbar/DefaultNavbarLink";
+
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -53,12 +60,19 @@ import {
   setOpenConfigurator,
 } from "context";
 
+import {useIsAuthenticated} from 'react-auth-kit';
+
 function DashboardNavbar({ absolute, light, isMini }) {
+
+  /* TODO: auth_provider */
+  const isAuthenticated = useIsAuthenticated()
+
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+
 
   useEffect(() => {
     // Setting the navbar type
@@ -133,54 +147,77 @@ function DashboardNavbar({ absolute, light, isMini }) {
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
+
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <MDBox pr={1}>
               <MDInput label="Search here" />
             </MDBox>
-            <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
+
+            {isAuthenticated() ? (
+
+              <MDBox color={light ? "white" : "inherit"}>
+                <Link to="/authentication/sign-in/basic">
+                  <IconButton sx={navbarIconButton} size="small" disableRipple>
+                    <Icon sx={iconsStyle}>account_circle</Icon>
+                  </IconButton>
+                </Link>
+                <IconButton
+                  size="small"
+                  disableRipple
+                  color="inherit"
+                  sx={navbarMobileMenu}
+                  onClick={handleMiniSidenav}
+                >
+                  <Icon sx={iconsStyle} fontSize="medium">
+                    {miniSidenav ? "menu_open" : "menu"}
+                  </Icon>
                 </IconButton>
-              </Link>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarMobileMenu}
-                onClick={handleMiniSidenav}
-              >
-                <Icon sx={iconsStyle} fontSize="medium">
-                  {miniSidenav ? "menu_open" : "menu"}
-                </Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon sx={iconsStyle}>settings</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon sx={iconsStyle}>notifications</Icon>
-              </IconButton>
-              {renderMenu()}
+                <IconButton
+                  size="small"
+                  disableRipple
+                  color="inherit"
+                  sx={navbarIconButton}
+                  onClick={handleConfiguratorOpen}
+                >
+                  <Icon sx={iconsStyle}>settings</Icon>
+                </IconButton>
+                <IconButton
+                  size="small"
+                  disableRipple
+                  color="inherit"
+                  sx={navbarIconButton}
+                  aria-controls="notification-menu"
+                  aria-haspopup="true"
+                  variant="contained"
+                  onClick={handleOpenMenu}
+                >
+                  <Icon sx={iconsStyle}>notifications</Icon>
+                </IconButton>
+                {renderMenu()}
+              </MDBox>
+
+            ) : (
+
+              <MDBox color="inherit" display={{ xs: "none", lg: "flex" }} m={0} p={0}>
+                <DefaultNavbarLink
+                  icon="account_circle"
+                  name="sign up"
+                  route={"/authentication/sign-up?r=" + window.location.pathname + "" + window.location.search + "" + window.location.hash}
+                  light={light}
+                />
+                <DefaultNavbarLink
+                  icon="key"
+                  name="sign in"
+                  route={"/authentication/sign-in?r=" + window.location.pathname + "" + window.location.search + "" + window.location.hash}
+                  light={light}
+                />
             </MDBox>
+
+            )}
+
           </MDBox>
-        )}
-      </Toolbar>
+        )}</Toolbar>
     </AppBar>
   );
 }
