@@ -51,7 +51,12 @@ import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
+import {useIsAuthenticated, useAuthUser} from 'react-auth-kit';
+
 function Overview() {
+
+  const auth = useAuthUser()
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -66,7 +71,7 @@ function Overview() {
               <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
               <ProfileInfoCard
                 title="profile information"
-                description="Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
+                description={`Hi, I’m ${auth().name}, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
                 info={{
                   fullName: "Alec M. Thompson",
                   mobile: "(44) 123 1234 123",

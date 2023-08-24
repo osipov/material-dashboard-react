@@ -57,12 +57,17 @@ import {
   setOpenConfigurator,
 } from "context";
 
-import {useIsAuthenticated} from 'react-auth-kit';
+import {useIsAuthenticated, useAuthUser} from 'react-auth-kit';
 
 function DashboardNavbar({ absolute, light, isMini }) {
 
   /* TODO: auth_provider */
   const isAuthenticated = useIsAuthenticated()
+
+  if (isAuthenticated) {
+    const auth = useAuthUser()
+    console.log(auth())
+  }
 
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
@@ -152,6 +157,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
             </MDBox>
 
             {isAuthenticated() ? (
+
+
 
               <MDBox color={light ? "white" : "inherit"}>
                 <Link to="/authentication/sign-in/basic">

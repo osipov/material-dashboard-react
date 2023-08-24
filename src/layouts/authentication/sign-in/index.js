@@ -18,7 +18,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from 'axios';
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, json } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -44,6 +44,9 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 import { useSignIn } from 'react-auth-kit'
+import { useJwt } from "react-jwt";      
+import { isExpired, decodeToken } from "react-jwt";
+
 
 
 function Basic() {
@@ -76,12 +79,36 @@ function Basic() {
       'password': password,
     };
 
-    axios.post('http://localhost:9090/pub/signin', data, { headers: {
+    axios.post('http://localhost:3000/pub/signin', data, { headers: {
         'Content-Type': 'application/json'
     }})
     .then((response) => {
-      console.log(JSON.stringify(response.data));
-      // res.json(JSON.stringify(response.data));
+      // console.log(JSON.stringify(response.data));
+      const resp_data = JSON.parse(response.data)
+      /* TODO: AuthProvider refresh token */
+      // "refreshToken": resp_data.refresh_token,
+      // "refreshTokenExpireIn": resp_data.refresh_expires_in,
+
+      // const { decodedToken, isExpired } = decodeToken(resp_data.access_token);
+      const decodedToken = decodeToken(resp_data.access_token);
+      console.log(decodedToken);
+
+      if (signIn({
+        "token": resp_data.access_token,
+        "expiresIn": resp_data.expires_in,
+        "tokenType": 'Bearer',
+        "authState": {email: user, family_name: decodedToken.family_name, given_name: decodedToken.given_name, name: decodedToken.name},
+      })) {
+          console.log('redirect' + window.location.search + window.location.hash)
+
+          const params = new URLSearchParams(window.location.search)
+          if (params.get('r')) {
+            console.log(params.get('r'))
+            window.location.href = params.get('r') + "" + window.location.hash
+          } else {
+            window.location.href = window.location.hostname
+          }
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -99,13 +126,13 @@ function Basic() {
 
     //   console.log('redirect' + window.location.search + window.location.hash)
       
-    //   const params = new URLSearchParams(window.location.search)
-    //   if (params.get('r')) {
-    //     console.log(params.get('r'))
-    //     window.location.href = params.get('r') + "" + window.location.hash
-    //   } else {
-    //     // window.location.href = window.location.hostname
-    //   }
+      // const params = new URLSearchParams(window.location.search)
+      // if (params.get('r')) {
+      //   console.log(params.get('r'))
+      //   window.location.href = params.get('r') + "" + window.location.hash
+      // } else {
+      //   // window.location.href = window.location.hostname
+      // }
       
     //   } else {
     //     console.log('error')

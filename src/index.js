@@ -18,10 +18,6 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
 
-/* TODO: auth_provider
-import { AuthProvider } from "./context/auth_provider";
-*/
-
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
 
