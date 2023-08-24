@@ -20,19 +20,19 @@ Coded by www.creative-tim.com
 
 import { createContext, useContext, useReducer, useMemo } from "react";
 
-import Keycloak from "keycloak-js";
-const _kc = new Keycloak({
-  url: "http://localhost:8080",
-  realm: "rpi",
-  clientId: "dashboard",
-})
+// import Keycloak from "keycloak-js";
+// const _kc = new Keycloak({
+//   url: "http://localhost:8080",
+//   realm: "rpi",
+//   clientId: "dashboard",
+// })
 
-try {
-  const authenticated = await _kc.init({onLoad: 'check-sso'})
-  console.log(`User is ${authenticated ? 'authenticated' : 'not authenticated'}`);
-} catch (error) {
-  console.error('Failed to initialize adapter:', error);
-}
+// try {
+//   const authenticated = await _kc.init({onLoad: 'check-sso'})
+//   console.log(`User is ${authenticated ? 'authenticated' : 'not authenticated'}`);
+// } catch (error) {
+//   console.error('Failed to initialize adapter:', error);
+// }
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";

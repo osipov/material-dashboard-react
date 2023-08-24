@@ -13,7 +13,9 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+import axios from 'axios';
 
 // react-router-dom components
 import { Link } from "react-router-dom";
@@ -47,35 +49,67 @@ import { useSignIn } from 'react-auth-kit'
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
+  const userRef = useRef();
+  const passwordRef = useRef();
+
+  const [user, setUser] = useState('');
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+
+  const [password, setPassword] = useState('');
+
+  const [errMsg, setErrMsg] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const signIn = useSignIn()
 
   const onClickSignIn = () => {
-    console.log('on click')
-    const kcAuthState = {
-      email: 'joeshmoe@mailismagic.com'
-    }
-    if (signIn({
-        token: 'abc',
-        expiresIn: 1,
-        tokenType: 'Bearer',
-        authState: kcAuthState
-      })) {
 
-      console.log('redirect' + window.location.search + window.location.hash)
+    const data = {
+      'username': user,
+      'password': password,
+    };
+
+    axios.post('http://localhost:9090/pub/signin', data, { headers: {
+        'Content-Type': 'application/json'
+    }})
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      // res.json(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });    
+
+    // const kcAuthState = {
+    //   email: 'joeshmoe@mailismagic.com'
+    // }
+    // if (signIn({
+    //     token: 'abc',
+    //     expiresIn: 1,
+    //     tokenType: 'Bearer',
+    //     authState: kcAuthState
+    //   })) {
+
+    //   console.log('redirect' + window.location.search + window.location.hash)
       
-      const params = new URLSearchParams(window.location.search)
-      if (params.get('r')) {
-        console.log(params.get('r'))
-        window.location.href = params.get('r') + "" + window.location.hash
-      } else {
-        // window.location.href = window.location.hostname
-      }
+    //   const params = new URLSearchParams(window.location.search)
+    //   if (params.get('r')) {
+    //     console.log(params.get('r'))
+    //     window.location.href = params.get('r') + "" + window.location.hash
+    //   } else {
+    //     // window.location.href = window.location.hostname
+    //   }
       
-    } else {
-      console.log('error')
-    }
+    //   } else {
+    //     console.log('error')
+    //   }
   }
 
   return (
@@ -116,10 +150,12 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput ref={userRef} type="email" label="Email" required fullWidth 
+                onChange={(e) => setUser(e.target.value)} />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput ref={passwordRef} type="password" label="Password" required fullWidth 
+                onChange={(e) => setPassword(e.target.value)} />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />

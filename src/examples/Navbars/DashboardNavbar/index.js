@@ -15,9 +15,6 @@ Coded by www.creative-tim.com
 
 import { useState, useEffect, useContext } from "react";
 
-/* TODO: auth_provider */
-import AuthContext from "../../../context/auth_provider";
-
 // react-router components
 import { useLocation, Link } from "react-router-dom";
 
